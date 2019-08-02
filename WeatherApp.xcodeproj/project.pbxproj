@@ -58,9 +58,9 @@
 		A052C31C22F4463800CDD6F1 /* WeatherApp */ = {
 			isa = PBXGroup;
 			children = (
+				A0F247DE22F473A0004DEEF0 /* Weather */,
 				A0F247DB22F47153004DEEF0 /* Data & Parser */,
 				A052C31D22F4463800CDD6F1 /* AppDelegate.swift */,
-				A0F247D922F46651004DEEF0 /* PageWeather.swift */,
 				A052C32122F4463800CDD6F1 /* Main.storyboard */,
 				A052C32722F4463900CDD6F1 /* Assets.xcassets */,
 				A052C32922F4463900CDD6F1 /* LaunchScreen.storyboard */,
@@ -76,6 +76,14 @@
 				A0F247DC22F4716D004DEEF0 /* WeatherData.swift */,
 			);
 			path = "Data & Parser";
+			sourceTree = "<group>";
+		};
+		A0F247DE22F473A0004DEEF0 /* Weather */ = {
+			isa = PBXGroup;
+			children = (
+				A0F247D922F46651004DEEF0 /* PageWeather.swift */,
+			);
+			path = Weather;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
