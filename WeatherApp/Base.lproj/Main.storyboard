@@ -141,7 +141,7 @@
                                 </segments>
                             </segmentedControl>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Ch7-L0-bLC">
-                                <rect key="frame" x="0.0" y="20" width="375" height="599"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="619"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <view key="tableHeaderView" contentMode="scaleToFill" id="XIf-71-uz7">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -166,14 +166,14 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="Ch7-L0-bLC" firstAttribute="trailing" secondItem="Qp3-xl-UO8" secondAttribute="trailing" id="6u3-O4-29H"/>
-                            <constraint firstItem="XV7-Z7-bGq" firstAttribute="top" secondItem="Ch7-L0-bLC" secondAttribute="bottom" constant="8" id="IvF-t6-uCZ"/>
-                            <constraint firstItem="Ch7-L0-bLC" firstAttribute="leading" secondItem="Qp3-xl-UO8" secondAttribute="leading" id="Oze-3R-ndF"/>
-                            <constraint firstItem="Qp3-xl-UO8" firstAttribute="bottom" secondItem="q9Q-Ki-zEc" secondAttribute="bottom" constant="10" id="bP8-0S-cyC"/>
-                            <constraint firstItem="q9Q-Ki-zEc" firstAttribute="leading" secondItem="Qp3-xl-UO8" secondAttribute="leading" constant="10" id="czr-LH-gGP"/>
-                            <constraint firstItem="Qp3-xl-UO8" firstAttribute="trailing" secondItem="XV7-Z7-bGq" secondAttribute="trailing" constant="10" id="j5s-IY-URt"/>
-                            <constraint firstItem="Ch7-L0-bLC" firstAttribute="top" secondItem="KLu-xz-Gds" secondAttribute="topMargin" id="nYn-eU-ZBJ"/>
-                            <constraint firstItem="Qp3-xl-UO8" firstAttribute="bottom" secondItem="XV7-Z7-bGq" secondAttribute="bottom" constant="10" id="rui-TJ-GT5"/>
+                            <constraint firstItem="Ch7-L0-bLC" firstAttribute="top" secondItem="KLu-xz-Gds" secondAttribute="top" id="Cgp-E1-tXH"/>
+                            <constraint firstItem="Qp3-xl-UO8" firstAttribute="trailing" secondItem="XV7-Z7-bGq" secondAttribute="trailing" constant="10" id="G6y-vf-Lxn"/>
+                            <constraint firstItem="Ch7-L0-bLC" firstAttribute="trailing" secondItem="Qp3-xl-UO8" secondAttribute="trailing" id="IbE-YH-ctw"/>
+                            <constraint firstItem="Ch7-L0-bLC" firstAttribute="leading" secondItem="Qp3-xl-UO8" secondAttribute="leading" id="K7q-wF-enp"/>
+                            <constraint firstItem="XV7-Z7-bGq" firstAttribute="top" secondItem="Ch7-L0-bLC" secondAttribute="bottom" constant="8" id="PfS-bR-KMc"/>
+                            <constraint firstItem="q9Q-Ki-zEc" firstAttribute="leading" secondItem="Qp3-xl-UO8" secondAttribute="leading" constant="10" id="fuD-FZ-713"/>
+                            <constraint firstItem="Qp3-xl-UO8" firstAttribute="bottom" secondItem="q9Q-Ki-zEc" secondAttribute="bottom" constant="10" id="sDK-zd-iU1"/>
+                            <constraint firstItem="Qp3-xl-UO8" firstAttribute="bottom" secondItem="XV7-Z7-bGq" secondAttribute="bottom" constant="10" id="yDg-TQ-4iu"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Qp3-xl-UO8"/>
                     </view>
