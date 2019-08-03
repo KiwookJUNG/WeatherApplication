@@ -140,18 +140,17 @@
                                     <segment title="F"/>
                                 </segments>
                             </segmentedControl>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Ch7-L0-bLC">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="619"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Ch7-L0-bLC">
+                                <rect key="frame" x="0.0" y="20" width="375" height="599"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <view key="tableFooterView" contentMode="scaleToFill" id="XIf-71-uz7">
-                                    <rect key="frame" x="0.0" y="109" width="375" height="44"/>
+                                <view key="tableHeaderView" contentMode="scaleToFill" id="XIf-71-uz7">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </view>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cityCell" rowHeight="81" id="2mV-w6-7Wp">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="81"/>
+                                        <rect key="frame" x="0.0" y="72" width="375" height="81"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2mV-w6-7Wp" id="5iN-qu-IM8">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="80.5"/>
@@ -167,10 +166,14 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="Qp3-xl-UO8" firstAttribute="trailing" secondItem="XV7-Z7-bGq" secondAttribute="trailing" constant="10" id="A3M-K5-tZL"/>
-                            <constraint firstItem="Qp3-xl-UO8" firstAttribute="bottom" secondItem="XV7-Z7-bGq" secondAttribute="bottom" constant="10" id="Lm4-Xv-gXc"/>
-                            <constraint firstItem="q9Q-Ki-zEc" firstAttribute="leading" secondItem="Qp3-xl-UO8" secondAttribute="leading" constant="10" id="QbW-cO-S2q"/>
-                            <constraint firstItem="Qp3-xl-UO8" firstAttribute="bottom" secondItem="q9Q-Ki-zEc" secondAttribute="bottom" constant="10" id="jbj-fh-a1r"/>
+                            <constraint firstItem="Ch7-L0-bLC" firstAttribute="trailing" secondItem="Qp3-xl-UO8" secondAttribute="trailing" id="6u3-O4-29H"/>
+                            <constraint firstItem="XV7-Z7-bGq" firstAttribute="top" secondItem="Ch7-L0-bLC" secondAttribute="bottom" constant="8" id="IvF-t6-uCZ"/>
+                            <constraint firstItem="Ch7-L0-bLC" firstAttribute="leading" secondItem="Qp3-xl-UO8" secondAttribute="leading" id="Oze-3R-ndF"/>
+                            <constraint firstItem="Qp3-xl-UO8" firstAttribute="bottom" secondItem="q9Q-Ki-zEc" secondAttribute="bottom" constant="10" id="bP8-0S-cyC"/>
+                            <constraint firstItem="q9Q-Ki-zEc" firstAttribute="leading" secondItem="Qp3-xl-UO8" secondAttribute="leading" constant="10" id="czr-LH-gGP"/>
+                            <constraint firstItem="Qp3-xl-UO8" firstAttribute="trailing" secondItem="XV7-Z7-bGq" secondAttribute="trailing" constant="10" id="j5s-IY-URt"/>
+                            <constraint firstItem="Ch7-L0-bLC" firstAttribute="top" secondItem="KLu-xz-Gds" secondAttribute="topMargin" id="nYn-eU-ZBJ"/>
+                            <constraint firstItem="Qp3-xl-UO8" firstAttribute="bottom" secondItem="XV7-Z7-bGq" secondAttribute="bottom" constant="10" id="rui-TJ-GT5"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Qp3-xl-UO8"/>
                     </view>
