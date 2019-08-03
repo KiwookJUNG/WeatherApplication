@@ -9,7 +9,7 @@
 import UIKit
 
 
-//MARK : - Data Model & Parser
+//MARK: - Data Model & Parser
 class WeatherData {
     
     var longitude : Int? // 위도
@@ -92,6 +92,7 @@ class WeatherData {
     }
 }
 
+//MARK: - Data Model 내부에 들어가는 약 40개의 간단한 일기예보
 struct ForecastWeatherData {
     var time : Int?
     var timeString : String?
@@ -121,11 +122,14 @@ struct ForecastWeatherData {
     
 }
 
+//MARK: - 사용자가 추가한 위치정보를 저장하는 구조체
+struct SavedPoint {
+    var longitude : Double
+    var latitude : Double
+}
 
 
-
-
-
+//MARK: - 화씨 온도 변환을 위한 extension과 초속을을 변환하기 위한 extension
 extension Double {
     var celsius : Double { return self - 273.15}
     var km : Double { return self / 1000 }
