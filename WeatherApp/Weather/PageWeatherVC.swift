@@ -9,10 +9,6 @@
 import UIKit
 import MapKit
 
-protocol GetWeatherInformation {
-    func coordinateToWeather(longi : Double, lati : Double)
-}
-
 class PageWeatherVC: UIViewController {
     
     @IBOutlet var pageCollectionView: UICollectionView!
@@ -22,12 +18,14 @@ class PageWeatherVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // 구현해야 할 코드 : UserDefault에서 좌표 정보를 읽어와 [weatherData]를 추가하는 메소드
         
         pageCollectionView.backgroundColor = .green
         
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest // 정확도
         locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
+        
+        //locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
         
     }
@@ -46,31 +44,7 @@ class PageWeatherVC: UIViewController {
     
 }
 
-//MARK: - 좌표를 이용해 날씨 API를 통해 얻어온 정보로 변환하여 저장하는 프로토콜 구현
-extension PageWeatherVC: GetWeatherInformation {
-    func coordinateToWeather(longi: Double, lati: Double) {
-        // 이 좌표는 UserDefault에 저장될 필요가 없는 좌표이다.
-        // 왜냐하면 매번 갱신되기 떄문
-        
-        let frontURL = "http://api.openweathermap.org/data/2.5/"
-        let APPID = "&APPID=7557a2e7185bcdda5baa43838b942438"
-        
-        let todayURL = frontURL + "weather?lat=\(Int(lati))&lon=\(longi)" + APPID
-        let forecastURL = frontURL + "forecast?lat=\(Int(lati))&lon=\(longi)" + APPID
-        
-        let todayAPI: URL! = URL(string: todayURL)
-        let todayAPIData = try! Data(contentsOf: todayAPI)
-        
-        let forecastAPI: URL! = URL(string: forecastURL)
-        let forecastAPIData = try! Data(contentsOf: forecastAPI)
-        
-        let weatherInfo = WeatherData(todayData : todayAPIData, forecastData : forecastAPIData)
-        
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        appDelegate.weatherDataList.insert(weatherInfo, at: 0) // 0번째 자리에 추가.
-        // 왜냐하면 Collection View Cell의 첫번째 자리에 위치해야 하기 때문이다.
-    }
-}
+
 
 
 
@@ -143,6 +117,7 @@ extension PageWeatherVC : UITableViewDataSource, UITableViewDelegate{
 
 
 
+
 //MARK: - Mapkit에 대한 Extension
 extension PageWeatherVC : CLLocationManagerDelegate {
     
@@ -151,15 +126,44 @@ extension PageWeatherVC : CLLocationManagerDelegate {
         
         let lastLocation: CLLocation = locations[locations.count - 1]
         
+        let doubleLati = lastLocation.coordinate.latitude as Double
+        let doubleLongi = lastLocation.coordinate.longitude as Double
+        
         // 좌표가 업데이트 되면
-        coordinateToWeather(longi: lastLocation.coordinate.longitude, lati: lastLocation.coordinate.latitude)
+        coordinateToWeather(longi: doubleLongi, lati: doubleLati, current : true)
         
         print(String(format: "%.6f", lastLocation.coordinate.latitude))
         print(String(format: "%.6f", lastLocation.coordinate.longitude))
-        
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Failed to find user's location: \(error.localizedDescription)")
+        let alert = UIAlertController(title: "에러", message: "사용자의 위치를 찾지못하였습니다.", preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "확인", style: UIAlertAction.Style.cancel, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch status {
+        case .authorizedAlways:
+            manager.requestWhenInUseAuthorization()
+        case .authorizedWhenInUse:
+            manager.requestWhenInUseAuthorization()
+        case .notDetermined:
+            manager.requestWhenInUseAuthorization()
+        case .restricted:
+            let alert = UIAlertController(title: "위치정보", message: "위치정보를 허용하지 않았으므로 현재 위치의 날씨는 나오지 않습니다. 설정에서 허용해주세요.", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "확인", style: UIAlertAction.Style.cancel, handler: nil))
+            present(alert, animated: true, completion: nil)
+        case .denied:
+            let alert = UIAlertController(title: "위치정보", message: "위치정보를 허용하지 않았으므로 현재 위치의 날씨는 나오지 않습니다. 설정에서 허용해주세요.", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "확인", style: UIAlertAction.Style.cancel, handler: nil))
+            present(alert, animated: true, completion: nil)
+        @unknown default:
+            let alert = UIAlertController(title: "위치정보", message: "알 수 없는 에러가 발생했습니다. 관리자에게 문의해주세요.", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "확인", style: UIAlertAction.Style.cancel, handler: nil))
+            present(alert, animated: true, completion: nil)
+            
+        }
+    }
+    
 }
