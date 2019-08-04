@@ -28,19 +28,12 @@ class PageWeatherVC: UIViewController {
         //locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
         
+        locationManager.startMonitoringSignificantLocationChanges()
+        // 사용자의 위치가 500미터 이상 움직이면 locationManager(_:didUpdateLocations:) 메소드를 호출
+        
     }
     
     
-//    // 뷰가 나타나기 직전 Location을 업데이트해준다.
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(false)
-//        locationManager.startUpdatingLocation()
-//    }
-//    // 뷰가 나타나고 난후 Location 업데이트를 중단한다.
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(false)
-//        locationManager.stopUpdatingLocation()
-//    }
     
 }
 
@@ -130,7 +123,7 @@ extension PageWeatherVC : CLLocationManagerDelegate {
         let doubleLongi = lastLocation.coordinate.longitude as Double
         
         // 좌표가 업데이트 되면
-        coordinateToWeather(longi: doubleLongi, lati: doubleLati, current : true)
+        coordinateToWeather(longi: doubleLongi, lati: doubleLati)
         
         print(String(format: "%.6f", lastLocation.coordinate.latitude))
         print(String(format: "%.6f", lastLocation.coordinate.longitude))
