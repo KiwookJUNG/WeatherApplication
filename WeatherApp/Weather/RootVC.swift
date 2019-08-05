@@ -20,7 +20,15 @@ class RootVC : UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // 구현해야 할 코드 : UserDefault에서 좌표 정보를 읽어와 [weatherData]를 추가하는 메소드
+        // 재시작하였을 때 저장된 카운터 만큼 페이지수를 만들어주기 위하여
+        // UserDefaults에 저장된 [SavedPoint]의 배열의 갯수만큼 페이지수를 대입해준다.
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let plist = UserDefaults.standard
+        let savedCounter = plist.array(forKey: "savedPoint") as! [SavedPoint]
+        
+        appDelegate.pageViewControllerCounter = savedCounter.count
+        
         
         self.pageViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PageVC") as? UIPageViewController
         self.pageViewController.dataSource = self
@@ -71,7 +79,9 @@ extension RootVC : UIPageViewControllerDataSource, UIPageViewControllerDelegate 
         if (index == 0 || index == NSNotFound){
             return nil
         }
+            
         index -= 1
+            
         return viewControllerAtIndex(index: index)
             
             
