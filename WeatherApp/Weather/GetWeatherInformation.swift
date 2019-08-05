@@ -25,7 +25,7 @@ import UIKit
 
 
 //MARK: - 좌표를 이용해 날씨 API를 통해 얻어온 정보로 변환하여 저장하는 프로토콜 구현
-extension PageWeatherVC: GetWeatherInformation {
+extension RootVC: GetWeatherInformation {
     func coordinateToWeather(longi: Double, lati: Double) {
         // 이 좌표는 UserDefault에 저장될 필요가 없는 좌표이다.
         // 왜냐하면 매번 갱신되기 떄문
@@ -45,10 +45,10 @@ extension PageWeatherVC: GetWeatherInformation {
         let weatherInfo = WeatherData(todayData : todayAPIData, forecastData : forecastAPIData)
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    
-        appDelegate.weatherDataList.insert(weatherInfo, at: 0) // 0번째 자리에 추가.
+        
+        appDelegate.weatherDataRepo.insert(weatherInfo, at: 0) // 0번째 자리에 추가.
         // 왜냐하면 Collection View Cell의 첫번째 자리에 위치해야 하기 때문이다.
-    
+        
     }
     
 }
