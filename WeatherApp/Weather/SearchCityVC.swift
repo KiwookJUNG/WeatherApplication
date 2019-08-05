@@ -23,7 +23,9 @@ class SearchCityVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-      
+        searchedItemTable.separatorStyle = .none
+        searchedItemTable.backgroundColor = UIColor(red:0.25, green:0.24, blue:0.24, alpha:1.0)
+        
         searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
         searchController.searchBar.delegate = self
@@ -31,12 +33,18 @@ class SearchCityVC: UIViewController {
         
         searchController.obscuresBackgroundDuringPresentation = true
         searchController.searchBar.placeholder = "도시를 입력해주세요"
-        searchController.searchBar.becomeFirstResponder()
+       
        
     
         definesPresentationContext = true
     }
     
+    // 서치바를 FirstResponder로 지정해줘서 뷰 컨트롤러에 진입하는 순간 키보드가 활성화된다.
+    override func viewDidAppear(_ animated: Bool) {
+        DispatchQueue.main.async {
+            self.searchController.searchBar.becomeFirstResponder()
+        }
+    }
 }
 
 
@@ -51,6 +59,10 @@ extension SearchCityVC: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell")!
+        //UIColor(red:0.25, green:0.24, blue:0.24, alpha:1.0)
+        cell.backgroundColor = UIColor(red:0.25, green:0.24, blue:0.24, alpha:1.0)
+        cell.textLabel?.textColor = .white
+        
         
         let selectedItem = matchingItems[indexPath.row]
         
@@ -95,12 +107,8 @@ extension SearchCityVC: UITableViewDelegate {
 }
 
 
-
-
-
-
 //MARK: - 서치 바 결과 업데이트 관리
-extension SearchCityVC : UISearchResultsUpdating, UISearchBarDelegate {
+extension SearchCityVC : UISearchResultsUpdating, UISearchBarDelegate, UISearchControllerDelegate {
 
     // 서치바에 업데이트가 되면 텍스트를 기반으로 MKLocalSearch request를 보낸다.
     func updateSearchResults(for searchController: UISearchController) {
@@ -119,8 +127,10 @@ extension SearchCityVC : UISearchResultsUpdating, UISearchBarDelegate {
             
             print(response.mapItems)
             
-            self?.matchingItems = response.mapItems
-            self?.searchedItemTable.reloadData()
+            DispatchQueue.main.async {
+                self?.matchingItems = response.mapItems
+                self?.searchedItemTable.reloadData()
+            }
         }
     }
     
@@ -129,12 +139,15 @@ extension SearchCityVC : UISearchResultsUpdating, UISearchBarDelegate {
     // 사용자가 텍스트를 모두 지웠을때 테이블뷰를 리셋한다.
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.count == 0 {
-            self.matchingItems = []
-            self.searchedItemTable.reloadData()
+            DispatchQueue.main.async {
+                self.matchingItems = []
+                self.searchedItemTable.reloadData()
+            }
+           
         }
     }
     
-    
+  
     
     
 }
