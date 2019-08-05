@@ -124,6 +124,7 @@ struct ForecastWeatherData {
 
 //MARK: - 사용자가 추가한 위치정보를 저장하는 구조체
 struct SavedPoint {
+    var city : String
     var longitude : Double
     var latitude : Double
 }
