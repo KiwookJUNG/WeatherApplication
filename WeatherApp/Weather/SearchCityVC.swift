@@ -33,9 +33,9 @@ class SearchCityVC: UIViewController {
         
         searchController.obscuresBackgroundDuringPresentation = true
         searchController.searchBar.placeholder = "도시를 입력해주세요"
-       
-       
-    
+        searchController.searchBar.keyboardAppearance = .dark
+        searchController.searchBar.barStyle = .blackTranslucent
+        
         definesPresentationContext = true
     }
     
