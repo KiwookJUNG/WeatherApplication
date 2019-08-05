@@ -16,11 +16,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var savedPointRepo = [SavedPoint]() // 저장된 위치
     var weatherDataRepo = [WeatherData]() // 날씨 정보
+    var pageViewControllerCounter = 0
     
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        let pageControl = UIPageControl.appearance()
+        pageControl.currentPageIndicatorTintColor = .black
+        pageControl.pageIndicatorTintColor = .lightGray
+        
         return true
     }
 
@@ -94,4 +99,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 }
+
+
 
