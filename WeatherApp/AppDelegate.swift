@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var savedPointRepo = [SavedPoint]() // 저장된 위치
     var weatherDataRepo = [WeatherData]() // 날씨 정보
     var pageViewControllerCounter = 0
-    
+    var isBackedSearchCityVC : Bool = false
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
