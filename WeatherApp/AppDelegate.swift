@@ -14,8 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     
-    var savedPointList = [SavedPoint]() // 저장된 위치
-    var weatherDataList = [WeatherData]() // 날씨 정보
+    var savedPointRepo = [SavedPoint]() // 저장된 위치
+    var weatherDataRepo = [WeatherData]() // 날씨 정보
     
 
 
