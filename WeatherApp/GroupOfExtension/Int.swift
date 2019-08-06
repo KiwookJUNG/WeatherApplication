@@ -21,6 +21,18 @@ extension Int {
         let localDate = dateFormatter.string(from: time)
         return localDate
     }
+    var dayAndTime : String {
+        let time = Date(timeIntervalSince1970: TimeInterval(self))
+        
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko")
+        dateFormatter.dateFormat = "E a h시"
+        dateFormatter.timeZone = .current
+        
+        let localDate = dateFormatter.string(from: time)
+        return localDate
+    }
     
     var today : String {
         let time = Date(timeIntervalSince1970: TimeInterval(self))
