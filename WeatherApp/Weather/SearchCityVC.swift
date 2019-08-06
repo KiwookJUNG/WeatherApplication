@@ -12,16 +12,19 @@ import MapKit
 
 class SearchCityVC: UIViewController {
     
-   
+    let locationManager : CLLocationManager = CLLocationManager()
     @IBOutlet var searchBarView: UIView!
     @IBOutlet var searchedItemTable: UITableView!
     var searchController: UISearchController!
     
     var matchingItems: [MKMapItem] = []
     
+    var selectedCity : String = ""
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         
         searchedItemTable.separatorStyle = .none
         searchedItemTable.backgroundColor = UIColor(red:0.25, green:0.24, blue:0.24, alpha:1.0)
@@ -56,40 +59,34 @@ extension SearchCityVC: UITableViewDataSource {
         return self.matchingItems.count
     }
     
-    
+    // 테이블 뷰 컨트롤러의 셀에 들어갈 정보를 표시해주기 위한 델리게이트 메소드
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell")!
-        //UIColor(red:0.25, green:0.24, blue:0.24, alpha:1.0)
+        // 기본 셀로 한다.
+
         cell.backgroundColor = UIColor(red:0.25, green:0.24, blue:0.24, alpha:1.0)
         cell.textLabel?.textColor = .white
-        
+        // 셀의 배경색은 검은색으로 셀의 글 색은 하얀색으로 설정한다.
         
         let selectedItem = matchingItems[indexPath.row]
+        // matchingItems 배열은 사용자가 입력한 검색어와 매칭되는 MKMapItem의 배열
         
+        // 좌표 정보를 얻어온다.
         let latitude = selectedItem.placemark.coordinate.latitude
         let longitude = selectedItem.placemark.coordinate.longitude
         let location = CLLocation(latitude: latitude, longitude: longitude)
-        let locale = Locale(identifier: "Ko-kr")
+        
+        let locale = Locale(identifier: "Ko-kr") // 한글로 변환하기 위해 (MKMapItem의 주소가 영어일 경우가 있기때문에)
         CLGeocoder().reverseGeocodeLocation(location, preferredLocale: locale) {(placemarks, error) in
-            guard let place = placemarks?[0] else {
-                return
-            }
+            guard let place = placemarks?[0] else { return }
+            
             var searchedString : String = ""
-            if place.country != nil {
-                searchedString = searchedString + place.country!
-            }
             
-            if place.administrativeArea != nil {
-                searchedString = searchedString + " " + place.administrativeArea!
-            }
-            if place.locality != nil {
-                searchedString = searchedString + " " + place.locality!
-            }
-            
-            if place.thoroughfare != nil {
-                searchedString = searchedString + " " + place.thoroughfare!
-            }
-            searchedString = searchedString + ", " + selectedItem.name! 
+            // nil값을 해제한 뒤 셀에 표시해준다.
+            if place.country != nil { searchedString = searchedString + place.country! }
+            if place.administrativeArea != nil { searchedString = searchedString + " " + place.administrativeArea!}
+            if place.locality != nil { searchedString = searchedString + " " + place.locality! }
+            if place.thoroughfare != nil { searchedString = searchedString + " " + place.thoroughfare! }
             
             cell.textLabel?.text = searchedString
         }
@@ -98,13 +95,34 @@ extension SearchCityVC: UITableViewDataSource {
 }
 
 
-//MARK: - 테이블 뷰 컨트롤러 델리게이트
+//MARK: - 테이블 뷰 컨트롤러 델리게이트 : 사용자가 검색된 셀을 선택하였을 때
 extension SearchCityVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         searchController.searchBar.resignFirstResponder()
-        print("사용자가 선택함")
+       
+        
+        let selectedCityInfo = self.matchingItems[indexPath.row]
+        
+        let latitude = selectedCityInfo.placemark.coordinate.latitude as Double
+        let longitude = selectedCityInfo.placemark.coordinate.longitude as Double
+
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let aPoint = SavedPoint(longitude: longitude, latitude: latitude)
+        
+        appDelegate.savedPointRepo.append(aPoint)
+        appDelegate.isBackedSearchCityVC = true
+        appDelegate.pageViewControllerCounter += 1
+        
+        // 추가한 정보를 UserDefault에 저장
+        let plist = UserDefaults.standard
+        plist.setStructArray(appDelegate.savedPointRepo, forKey: "savedPoint")
+        plist.synchronize()
+        
+        self.presentingViewController?.dismiss(animated: true)
     }
 }
+
 
 
 //MARK: - 서치 바 결과 업데이트 관리
@@ -115,7 +133,6 @@ extension SearchCityVC : UISearchResultsUpdating, UISearchBarDelegate, UISearchC
     
         guard let searchBarText = searchController.searchBar.text else { return }
         let request = MKLocalSearch.Request()
-        
         
         request.naturalLanguageQuery = searchBarText
         
@@ -134,9 +151,7 @@ extension SearchCityVC : UISearchResultsUpdating, UISearchBarDelegate, UISearchC
         }
     }
     
- 
-    
-    // 사용자가 텍스트를 모두 지웠을때 테이블뷰를 리셋한다.
+    // 사용자가 텍스트를 모두 지웠을때 빈 테이블뷰를 리셋한다.
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.count == 0 {
             DispatchQueue.main.async {
@@ -147,7 +162,13 @@ extension SearchCityVC : UISearchResultsUpdating, UISearchBarDelegate, UISearchC
         }
     }
     
-  
-    
-    
+    // 사용자가 취소버튼을 클릭하면 이전 뷰 컨트롤러로 돌아간다.
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        self.presentingViewController?.dismiss(animated: true)
+    }
 }
+
+
+
+
+
