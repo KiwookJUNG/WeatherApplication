@@ -7,41 +7,81 @@
 //
 
 import UIKit
+import MapKit
 
 class CityListWeatherVC : UIViewController {
     
-    var dataForCell : [WeatherData] = []
     
+    @IBOutlet var cityTable: UITableView!
+    var cityWeatherArray : [WeatherData] = []
+    var cityPointArray : [SavedPoint] = []
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+
+    @IBAction func addCity(_ sender: UIButton) {
+        let scVC = self.storyboard!.instantiateViewController(withIdentifier: "SearchCityVC")
+        
+        scVC.modalTransitionStyle = UIModalTransitionStyle.coverVertical
+        
+        self.present(scVC, animated: true)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        self.dataForCell = appDelegate.weatherDataList
+        cityPointArray = appDelegate.savedPointRepo
+        
+        guard let currentPoint = appDelegate.currentPoint else { return }
+        cityPointArray.insert(currentPoint, at: 0)
+        
+        
+        for cityPoint in cityPointArray {
+            let weatherData = coordinateToWeather(longi: cityPoint.longitude, lati: cityPoint.latitude)
+            cityWeatherArray.append(weatherData)
+            DispatchQueue.main.async {
+                self.cityTable.reloadData()
+            }
+        }
     }
     
-// 세 번째 페이지에서 새로운 도시를 추가하면 저장소(UserDelfalut) 및 AppDelegate(싱글톤 저장소)에 저장되고
-// 이 후, 화면이 세 번째 뷰컨에서 두 번째 뷰컨으로 돌아오는 순간 talbeView를 reloadData()를 해줘야함
-// 왜냐하면 viewDidLoad 에서 읽어온 dataForCell은 세 번쨰 화면에서 업데이트 된 도시 데이터를 가지고 있지않으므로
-// 테이블 뷰에도 표시가 안돼있다. 하지만 세 번째 뷰 컨트롤러에서 AppDelegate에 저장하고 dataForCell 에도 데이터를 다시 바꿔주면
-// reloadData()를 해줘야 테이블 뷰에 반영되기 때문이다.
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(false)
-//        self.tableview.reloadData()
-//
-//    }
-    
 }
+
 
 //MARK: - 테이블뷰의 DataSource 델리게이트
 extension CityListWeatherVC : UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return cityPointArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cityCell", for: indexPath)
         
-        cell.backgroundColor = .black
+        
+        DispatchQueue.main.async {
+            let location = CLLocation(latitude: self.cityPointArray[indexPath.row].latitude, longitude: self.cityPointArray[indexPath.row].longitude)
+            
+            let locale = Locale(identifier: "Ko-kr")
+            CLGeocoder().reverseGeocodeLocation(location, preferredLocale: locale) {(placemarks, error) in
+                guard let place = placemarks?[0] else {
+                    return
+                }
+                var searchedString : String = ""
+                
+                if place.administrativeArea != nil { searchedString = searchedString + " " + place.administrativeArea!}
+                if place.locality != nil { searchedString = searchedString + " " + place.locality! }
+                
+                cell.textLabel?.text = searchedString
+            }
+        }
+        
+        
         return cell
+    }
+}
+
+//MARK: - 테이블뷰의 Delegate
+// 셀 선택시 일단 뒤로 간다.
+extension CityListWeatherVC : UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.presentingViewController?.dismiss(animated: true)
     }
 }
