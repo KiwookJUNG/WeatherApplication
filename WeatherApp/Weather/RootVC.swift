@@ -36,10 +36,6 @@ class RootVC : UIViewController {
         savedDataInitializing()
         
         settingPageVC()
-        
-      
-        
-      
     }
 }
 
