@@ -12,16 +12,16 @@ import UIKit
 //MARK: - Data Model & Parser
 class WeatherData {
     
-    var longitude : Int? // 위도
-    var latitude : Int? // 경도
+    var longitude : Double? // 위도
+    var latitude : Double? // 경도
     
     var weather : String? // 날씨 상태
     var description : String? // 날씨 설명
     var icon : String? // 날씨 아이콘
     
-    var temperture : Double? // 기온 ( .celsius)
-    var maxTemperture : Double?// 최고기온 ( .celsius)
-    var minTemperture : Double? // 최저기온 ( .celsius)
+    var temperature : Double? // 기온 ( .celsius)
+    var maxTemperature : Double?// 최고기온 ( .celsius)
+    var minTemperature : Double? // 최저기온 ( .celsius)
     
     var pressure : Int? // 기압(hPa)
     var humidity : Int? // 습도(%)
@@ -48,16 +48,16 @@ class WeatherData {
             self.cloud = clouds["all"] as? Int
             
             let coord = todayJSON["coord"] as! NSDictionary
-            self.longitude = coord["lon"] as? Int
-            self.latitude = coord["lat"] as? Int
+            self.longitude = coord["lon"] as? Double
+            self.latitude = coord["lat"] as? Double
             self.time = todayJSON["dt"] as? Int
             
             let main = todayJSON["main"] as! NSDictionary
             self.humidity = main["humidity"] as? Int
             self.pressure = main["pressure"] as? Int
-            self.temperture = main["temp"] as? Double
-            self.maxTemperture = main["temp_max"] as? Double
-            self.minTemperture = main["temp_min"] as? Double
+            self.temperature = main["temp"] as? Double
+            self.maxTemperature = main["temp_max"] as? Double
+            self.minTemperature = main["temp_min"] as? Double
             
             let sys = todayJSON["sys"] as! NSDictionary
             self.sunrise = sys["sunrise"] as? Int
@@ -97,9 +97,9 @@ struct ForecastWeatherData {
     var time : Int?
     var timeString : String?
     
-    var temperture : Double? // 기온 ( .celsius)
-    var maxTemperture : Double?// 최고기온 ( .celsius)
-    var minTemperture : Double? // 최저기온 ( .celsius)
+    var temperature : Double? // 기온 ( .celsius)
+    var maxTemperature : Double?// 최고기온 ( .celsius)
+    var minTemperature : Double? // 최저기온 ( .celsius)
     
     var weather : String?
     
@@ -113,9 +113,9 @@ struct ForecastWeatherData {
         self.time = jsonObject["dt"] as? Int
         self.timeString = jsonObject["dt_txt"] as? String
         
-        self.temperture = main["temp"] as? Double
-        self.maxTemperture = main["temp_min"] as? Double
-        self.minTemperture = main["temp_max"] as? Double
+        self.temperature = main["temp"] as? Double
+        self.maxTemperature = main["temp_min"] as? Double
+        self.minTemperature = main["temp_max"] as? Double
         
         self.weather = weather["main"] as? String
     }
@@ -123,15 +123,10 @@ struct ForecastWeatherData {
 }
 
 //MARK: - 사용자가 추가한 위치정보를 저장하는 구조체
-struct SavedPoint {
-    var city : String
+struct SavedPoint: Codable{
     var longitude : Double
     var latitude : Double
 }
 
 
-//MARK: - 화씨 온도 변환을 위한 extension과 초속을을 변환하기 위한 extension
-extension Double {
-    var celsius : Double { return self - 273.15}
-    var km : Double { return self / 1000 }
-}
+
