@@ -16,11 +16,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var savedPointRepo : [SavedPoint] = [] // 저장된 위치 UserDefaults에 저장하는 대상
     var weatherDataRepo : [WeatherData?] = [] // 날씨 정보 UserDefaults에 저장하는 대상이 아님
-    var pageViewControllerCounter = 0
+    var pageViewControllerCounter = 0 // 페이지 뷰 컨트롤러가 생성될 수 있는 최대의 페이지
     
-    var currentPoint : SavedPoint?
+    var currentPoint : SavedPoint? // 현재 위치 좌표
     
-    var isBackedSearchCityVC : Bool = false
+    var isBackedSearchCityVC : Bool = false // 도시를 추가하고 되돌아 왔으면 true
     var hasSavedData : Bool = false
     
 
