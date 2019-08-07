@@ -11,10 +11,6 @@ import MapKit
 
 class RootVC : UIViewController {
     
-    
-    @IBOutlet var gotoList: UIButton!
-    
-    
     var pageViewController : UIPageViewController!
     let locationManager : CLLocationManager = CLLocationManager()
     
