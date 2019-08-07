@@ -8,6 +8,11 @@
 
 import UIKit
 
+//MARK: - 사용자가 추가한 위치정보를 저장하는 구조체
+struct SavedPoint: Codable{
+    var longitude : Double
+    var latitude : Double
+}
 
 //MARK: - Data Model & Parser
 class WeatherData {
@@ -29,17 +34,18 @@ class WeatherData {
     var visibility : Double? // 가시거리 ( .km )
     
     var windSpeed : Double? // 풍속
-    var windDegree : Double?
+    var windDegree : Double? // 풍향
     
-    var cloud : Int?
+    var cloud : Int? // 구름양
     
-    var timezone : Int?
+    var timezone : Int? // UTC 기준 타임존
     var time : Int? // Unix
-    var sunrise : Int? //
-    var sunset : Int?
+    var sunrise : Int? // 일출
+    var sunset : Int? // 일몰
     
     var forecastArray : [ForecastWeatherData] = []
     
+    // 초기화 및 파싱
     init(todayData : Data, forecastData : Data ) {
         do{
             let todayJSON = try JSONSerialization.jsonObject(with: todayData, options: []) as! NSDictionary
@@ -96,15 +102,16 @@ class WeatherData {
 
 //MARK: - Data Model 내부에 들어가는 약 40개의 간단한 일기예보
 struct ForecastWeatherData {
-    var time : Int?
+    var time : Int? // 시간
     var timeString : String?
     
     var temperature : Double? // 기온 ( .celsius)
     var maxTemperature : Double?// 최고기온 ( .celsius)
     var minTemperature : Double? // 최저기온 ( .celsius)
     
-    var weather : String?
+    var weather : String? // 날씨
     
+    // 초기화 및 파싱
     init(jsonObject : NSDictionary) {
         let main = jsonObject["main"] as! NSDictionary
         
@@ -124,11 +131,7 @@ struct ForecastWeatherData {
     
 }
 
-//MARK: - 사용자가 추가한 위치정보를 저장하는 구조체
-struct SavedPoint: Codable{
-    var longitude : Double
-    var latitude : Double
-}
+
 
 
 
