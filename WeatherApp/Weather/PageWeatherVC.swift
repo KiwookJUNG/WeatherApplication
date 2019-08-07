@@ -24,11 +24,10 @@ class PageWeatherVC: UIViewController {
     @IBOutlet var tableView: UITableView!
     @IBOutlet var collectionView: UICollectionView!
     
+    // 화면 전환 액션 메소드
     @IBAction func goToCityList(_ sender: UIButton) {
         let clVC = self.storyboard!.instantiateViewController(withIdentifier: "CityListWeatherVC")
-        
         clVC.modalTransitionStyle = UIModalTransitionStyle.coverVertical
-        
         self.present(clVC, animated: true)
     }
     
@@ -40,43 +39,37 @@ class PageWeatherVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.tableView.separatorStyle = .none
         
         // CLLocationManager 설정
         locationManager.desiredAccuracy = kCLLocationAccuracyBest // 정확도
         locationManager.delegate = self
         
         
-        // Cell 등록
-        self.tableView.separatorStyle = .none
-        //self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "infoCell")
-        //self.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "hourCell")
-        
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         
-        
+        // 첫 번째 페이지 뷰이면 현재 위치 업데이트
         if (self.index == 0) {
-            
             locationManager.requestLocation()
-            //locationManager.startMonitoringSignificantLocationChanges()
-            print("index 0 : viewDidLoad 호출")
         } else {
-            
-            //self.weatherData = appDelegate.weatherDataRepo[index-1]
+        // 첫 번째 페이지가 아니고, 인덱스 범위에 있는 페이지의 UI를 업데이트 해준다.
             if ( self.index-1 >= 0 && self.index-1 < appDelegate.savedPointRepo.count) {
             let point = appDelegate.savedPointRepo[self.index-1]
             self.weatherData = coordinateToWeather(longi: point.longitude, lati: point.latitude)
             
+            // UI 업데이트 ( 도시이름, 기온 등 )
             getCityName(longi: point.longitude, lati: point.latitude)
             updateUI(data: self.weatherData)
-            
-            print("index x : viewDidLoad 호출")
+
             }
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(false)
+        
+        // 뷰가 다시 나타날 때, 좌표 정보가 있으면 좌표정보를 이용해 빠르게 UI를 업데이트 해준다.
+        // 왜냐하면, locationManager.requestLocation()에서 좌표정보를 받아오는게 느리기 때문..
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         if ( index == 0 && appDelegate.isBackedSearchCityVC == true ) {
             guard let currentPoint = appDelegate.currentPoint else { return }
@@ -86,25 +79,64 @@ class PageWeatherVC: UIViewController {
             updateUI(data: self.weatherData)
             appDelegate.isBackedSearchCityVC = false
         }
-        
-        
     }
-    
 }
 
+
+
+//MARK: - 입력받은 좌표로 UI업데이트 하는 메소드
+extension PageWeatherVC {
+    // 입력받은 좌표로 도시 이름 출력
+    func getCityName(longi : Double, lati : Double ) {
+        DispatchQueue.main.async {
+            let location = CLLocation(latitude: lati, longitude: longi)
+            let locale = Locale(identifier: "Ko-kr")
+            CLGeocoder().reverseGeocodeLocation(location, preferredLocale: locale) {(placemarks, error) in
+                guard let place = placemarks?[0] else {
+                    return
+                }
+                var searchedString : String = ""
+                
+                if place.administrativeArea != nil { searchedString = searchedString + " " + place.administrativeArea!}
+                if place.locality != nil { searchedString = searchedString + " " + place.locality! }
+                
+                self.city.text = searchedString
+            }
+        }
+    }
+    
+    // 날씨 정보 출력
+    func updateUI(data : WeatherData?){
+        DispatchQueue.main.async {
+            guard let description = data?.description else { return }
+            guard let time = data?.time else { return }
+            guard let temperature = data?.temperature else { return }
+            guard let maxTemperature = data?.maxTemperature else { return }
+            guard let minTemperature = data?.minTemperature else { return }
+            
+            self.weather.text = description
+            self.temperature.text = String(Int(temperature .celsius))
+            self.maxTemperature.text = String(Int(maxTemperature .celsius))
+            self.minTemperature.text = String(Int(minTemperature .celsius))
+            self.day.text = time .day
+            self.isToday.text = time .today
+        }
+    }
+}
 
 
 //MARK: - 컬렉션뷰 컨트롤러 데이터소스
 extension PageWeatherVC : UICollectionViewDataSource {
     
+    // 컬렉쎤뷰 셀 갯수
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 10
     }
     
+    // 컬렉션뷰 셀 UI 업데이트
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "hourCell", for: indexPath) as! HourCell
-        
         
         guard let time = weatherData?.forecastArray[indexPath.row].time else { return cell }
         guard let timezone = weatherData?.timezone else { return cell }
@@ -115,7 +147,6 @@ extension PageWeatherVC : UICollectionViewDataSource {
         cell.weather.text = weather
         cell.temperature.text = String(Int(temperature .celsius))
         
-        //cell.backgroundColor = .yellow
         return cell
     }
 }
@@ -123,6 +154,7 @@ extension PageWeatherVC : UICollectionViewDataSource {
 
 //MARK: - 테이블뷰 컨트롤러 데이터소스
 extension PageWeatherVC : UITableViewDataSource {
+    // 테이블뷰 높이
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.row < 5 {
             return 37
@@ -130,13 +162,12 @@ extension PageWeatherVC : UITableViewDataSource {
             return 75
         }
     }
+    // 테이블뷰 셀 개수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 9
     }
-    
+    // 테이블뷰 셀 UI 업데이트(날씨 정보)
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        
         if indexPath.row < 5 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "dayCell", for: indexPath) as! DayCell
             guard let time = weatherData?.forecastArray[indexPath.row * 8].time else { return cell }
@@ -178,12 +209,8 @@ extension PageWeatherVC : UITableViewDataSource {
                 cell.firstCell.text = "기압 : " + String(Int(pressure)) + "hPa"
                 cell.secondCell.text = "기압 : " + String(Int(pressure)) + "hPa"
             }
-           
-            
            return cell
         }
-        
-        
     }
 }
 
@@ -200,6 +227,7 @@ extension PageWeatherVC : CLLocationManagerDelegate {
         let doubleLati = lastLocation.coordinate.latitude as Double
         let doubleLongi = lastLocation.coordinate.longitude as Double
         
+        // AppDelegate의 현재 위치를 업데이트한다.
         appDelegate.currentPoint = SavedPoint(longitude: doubleLongi, latitude: doubleLati)
         
         // 도시 이름 업데이트
@@ -221,46 +249,8 @@ extension PageWeatherVC : CLLocationManagerDelegate {
 
 
 
-extension PageWeatherVC {
-    
-    func getCityName(longi : Double, lati : Double ) {
-        DispatchQueue.main.async {
-            let location = CLLocation(latitude: lati, longitude: longi)
-            let locale = Locale(identifier: "Ko-kr")
-            CLGeocoder().reverseGeocodeLocation(location, preferredLocale: locale) {(placemarks, error) in
-                guard let place = placemarks?[0] else {
-                    return
-                }
-                var searchedString : String = ""
-                
-                if place.administrativeArea != nil { searchedString = searchedString + " " + place.administrativeArea!}
-                if place.locality != nil { searchedString = searchedString + " " + place.locality! }
-                
-                self.city.text = searchedString
-            }
-        }
-    }
-    
-    func updateUI(data : WeatherData?){
-        DispatchQueue.main.async {
-            guard let description = data?.description else { return }
-            guard let time = data?.time else { return }
-            guard let temperature = data?.temperature else { return }
-            guard let maxTemperature = data?.maxTemperature else { return }
-            guard let minTemperature = data?.minTemperature else { return }
-            
-            self.weather.text = description
-            self.temperature.text = String(Int(temperature .celsius))
-            self.maxTemperature.text = String(Int(maxTemperature .celsius))
-            self.minTemperature.text = String(Int(minTemperature .celsius))
-            self.day.text = time .day
-            self.isToday.text = time .today
-        }
-    }
-}
 
-//MARK: - 위치정보에 대한 에러처리
-
+//MARK: - 위치정보에 대한 에러처
 extension PageWeatherVC {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         let alert = UIAlertController(title: "에러", message: "사용자의 위치를 찾지못하였습니다.", preferredStyle: UIAlertController.Style.alert)
