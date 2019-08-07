@@ -8,6 +8,7 @@
 
 import UIKit
 
+//MARK: - Table View를 위한 커스텀 셀
 class CityCell: UITableViewCell {
     
     @IBOutlet var time: UILabel!

@@ -8,6 +8,7 @@
 
 import UIKit
 
+//MARK: - Collection View를 위한 커스텀 셀
 class HourCell: UICollectionViewCell {
     
     @IBOutlet var time: UILabel!
