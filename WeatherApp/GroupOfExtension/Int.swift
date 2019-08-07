@@ -16,11 +16,25 @@ extension Int {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko")
         dateFormatter.dateFormat = "EEEE"
-        dateFormatter.timeZone = .current
+        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
         
         let localDate = dateFormatter.string(from: time)
         return localDate
     }
+    var AMPMHourMinute : String {
+        let time = Date(timeIntervalSince1970: TimeInterval(self))
+        
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko")
+        dateFormatter.dateFormat = "a HH:mm"
+        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+        
+        let localDate = dateFormatter.string(from: time)
+        return localDate
+    }
+    
+    
     var dayAndTime : String {
         let time = Date(timeIntervalSince1970: TimeInterval(self))
         
@@ -28,7 +42,7 @@ extension Int {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko")
         dateFormatter.dateFormat = "E a h시"
-        dateFormatter.timeZone = .current
+        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
         
         let localDate = dateFormatter.string(from: time)
         return localDate
@@ -41,7 +55,7 @@ extension Int {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko")
         dateFormatter.dateFormat = "EEEE"
-        dateFormatter.timeZone = .current
+        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
         
         let localDate = dateFormatter.string(from: time)
         let today = dateFormatter.string(from: Date())
@@ -49,7 +63,7 @@ extension Int {
             return "오늘"
         }
         
-        return "오늘이아님"
+        return "오늘"
         
     }
 }
