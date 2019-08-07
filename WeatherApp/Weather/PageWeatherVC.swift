@@ -24,65 +24,167 @@ class PageWeatherVC: UIViewController {
     @IBOutlet var tableView: UITableView!
     @IBOutlet var collectionView: UICollectionView!
     
+    @IBAction func goToCityList(_ sender: UIButton) {
+        let clVC = self.storyboard!.instantiateViewController(withIdentifier: "CityListWeatherVC")
+        
+        clVC.modalTransitionStyle = UIModalTransitionStyle.coverVertical
+        
+        self.present(clVC, animated: true)
+    }
     
     var index : Int = 0
-    var weatherData : WeatherData!
+    var weatherData : WeatherData?
+    
     
     let locationManager : CLLocationManager = CLLocationManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if index == 0 {
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest // 정확도
-            locationManager.delegate = self
+        
+        
+        // CLLocationManager 설정
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest // 정확도
+        locationManager.delegate = self
+        
+        
+        // Cell 등록
+        self.tableView.separatorStyle = .none
+        //self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "infoCell")
+        //self.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "hourCell")
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        
+        
+        if (self.index == 0) {
             
-            //locationManager.requestWhenInUseAuthorization()
             locationManager.requestLocation()
-            locationManager.startMonitoringSignificantLocationChanges()
-            // 사용자의 위치가 500미터 이상 움직이면 locationManager(_:didUpdateLocations:) 메소드를 호출
+            //locationManager.startMonitoringSignificantLocationChanges()
+            print("index 0 : viewDidLoad 호출")
+        } else {
+            
+            //self.weatherData = appDelegate.weatherDataRepo[index-1]
+            if ( self.index-1 >= 0 && self.index-1 < appDelegate.savedPointRepo.count) {
+            let point = appDelegate.savedPointRepo[self.index-1]
+            self.weatherData = coordinateToWeather(longi: point.longitude, lati: point.latitude)
+            
+            getCityName(longi: point.longitude, lati: point.latitude)
+            updateUI(data: self.weatherData)
+            
+            print("index x : viewDidLoad 호출")
+            }
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(false)
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        if ( index == 0 && appDelegate.isBackedSearchCityVC == true ) {
+            guard let currentPoint = appDelegate.currentPoint else { return }
+        
+            getCityName(longi: currentPoint.longitude, lati: currentPoint.latitude)
+            self.weatherData = coordinateToWeather(longi: currentPoint.longitude, lati: currentPoint.latitude)
+            updateUI(data: self.weatherData)
+            appDelegate.isBackedSearchCityVC = false
         }
         
-        self.tableView.register(UITableViewCell.self,
-                                  forCellReuseIdentifier: "cellForCollectionCell")
-        self.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "hourCell")
         
-
     }
-
+    
 }
 
 
-extension PageWeatherVC : UICollectionViewDelegate, UICollectionViewDataSource {
+
+//MARK: - 컬렉션뷰 컨트롤러 데이터소스
+extension PageWeatherVC : UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
-        
+        return 10
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "hourCell", for: indexPath)
-            cell.backgroundColor = .yellow
-            return cell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "hourCell", for: indexPath) as! HourCell
+        
+        
+        guard let time = weatherData?.forecastArray[indexPath.row].time else { return cell }
+        guard let timezone = weatherData?.timezone else { return cell }
+        guard let weather = weatherData?.forecastArray[indexPath.row].weather else { return cell }
+        guard let temperature = weatherData?.forecastArray[indexPath.row].temperature else { return cell }
+        
+        cell.time.text = (time + timezone) .dayAndTime
+        cell.weather.text = weather
+        cell.temperature.text = String(Int(temperature .celsius))
+        
+        //cell.backgroundColor = .yellow
+        return cell
     }
 }
 
 
-
-extension PageWeatherVC : UITableViewDelegate, UITableViewDataSource {
+//MARK: - 테이블뷰 컨트롤러 데이터소스
+extension PageWeatherVC : UITableViewDataSource {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.row < 5 {
+            return 37
+        } else {
+            return 75
+        }
+    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return 9
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        //tableView.separatorStyle = .none
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cellForCollectionCell", for: indexPath)
         
         
-        return cell
+        if indexPath.row < 5 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "dayCell", for: indexPath) as! DayCell
+            guard let time = weatherData?.forecastArray[indexPath.row * 8].time else { return cell }
+            guard let timezone = weatherData?.timezone else { return cell }
+            guard let min = weatherData?.forecastArray[indexPath.row * 8].minTemperature else { return cell }
+            guard let max = weatherData?.forecastArray[indexPath.row * 8].maxTemperature else { return cell }
+            guard let weather = weatherData?.forecastArray[indexPath.row * 8].weather else { return cell }
+            cell.day.text = (time+timezone) .day
+            cell.weather.text = weather
+            cell.minTemperature.text = String(Int(min .celsius))
+            cell.maxTemperature.text = String(Int(max .celsius))
+            
+            return cell
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "infoCell", for: indexPath) as! InfoCell
+            guard let sunset = weatherData?.sunset else { return cell }
+            guard let sunrise = weatherData?.sunrise else { return cell }
+            guard let timezone = weatherData?.timezone else { return cell }
+            guard let windSpeed = weatherData?.windSpeed else { return cell }
+            guard let windDegree = weatherData?.windDegree else { return cell }
+            guard let cloud = weatherData?.cloud else { return cell }
+            guard let pressure = weatherData?.pressure else { return cell }
+            guard let humidity = weatherData?.humidity else { return cell }
+            
+            
+            if(indexPath.row == 5) {
+                cell.firstCell.text = "일출 : " + String((sunrise + timezone) .AMPMHourMinute)
+                cell.secondCell.text = "일몰 : " + String((sunset + timezone) .AMPMHourMinute)
+            }
+            if(indexPath.row == 6) {
+                cell.firstCell.text = "풍향 : " + String(Int(windDegree))
+                cell.secondCell.text = "풍속 : " + String(windSpeed) + "m/s"
+            }
+            if(indexPath.row == 7) {
+                cell.firstCell.text = "구름 : " + String(cloud) + "%"
+                cell.secondCell.text = "습도 : " + String(Int(humidity)) + "%"
+            }
+            if(indexPath.row == 8) {
+                cell.firstCell.text = "기압 : " + String(Int(pressure)) + "hPa"
+                cell.secondCell.text = "기압 : " + String(Int(pressure)) + "hPa"
+            }
+           
+            
+           return cell
+        }
+        
+        
     }
-
 }
 
 
@@ -90,16 +192,40 @@ extension PageWeatherVC : UITableViewDelegate, UITableViewDataSource {
 extension PageWeatherVC : CLLocationManagerDelegate {
     
     // 좌표가 업데이트되면 호출되는 델리게이트 메소드
+    // 좌표가 업데이트되면 현재위치의 날씨 정보를 모두 업데이트해줘야한다.
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let lastLocation: CLLocation = locations[locations.count - 1]
-        
         let doubleLati = lastLocation.coordinate.latitude as Double
         let doubleLongi = lastLocation.coordinate.longitude as Double
         
+        appDelegate.currentPoint = SavedPoint(longitude: doubleLongi, latitude: doubleLati)
+        
+        // 도시 이름 업데이트
+        getCityName(longi: doubleLongi, lati: doubleLati)
+        
+        // 좌표가 업데이트 되면 weatherData를 리턴한다.
+        self.weatherData = coordinateToWeather(longi: doubleLongi, lati: doubleLati)
+        
+        // 현재위치 뷰컨트롤러 UI 업데이트
+        updateUI(data: self.weatherData)
+        
         DispatchQueue.main.async {
-            
-            let location = CLLocation(latitude: doubleLati, longitude: doubleLongi)
+            self.collectionView.reloadData()
+            self.tableView.reloadData()
+        }
+        
+    }
+}
+
+
+
+extension PageWeatherVC {
+    
+    func getCityName(longi : Double, lati : Double ) {
+        DispatchQueue.main.async {
+            let location = CLLocation(latitude: lati, longitude: longi)
             let locale = Locale(identifier: "Ko-kr")
             CLGeocoder().reverseGeocodeLocation(location, preferredLocale: locale) {(placemarks, error) in
                 guard let place = placemarks?[0] else {
@@ -107,28 +233,35 @@ extension PageWeatherVC : CLLocationManagerDelegate {
                 }
                 var searchedString : String = ""
                 
-                
-                if place.administrativeArea != nil {
-                    searchedString = searchedString + " " + place.administrativeArea!
-                }
-                if place.locality != nil {
-                    searchedString = searchedString + " " + place.locality!
-                }
-                
+                if place.administrativeArea != nil { searchedString = searchedString + " " + place.administrativeArea!}
+                if place.locality != nil { searchedString = searchedString + " " + place.locality! }
                 
                 self.city.text = searchedString
-                
-                
             }
         }
-        
-        // 좌표가 업데이트 되면
-        coordinateToWeather(longi: doubleLongi, lati: doubleLati)
-        
-        print(String(format: "%.6f", lastLocation.coordinate.latitude))
-        print(String(format: "%.6f", lastLocation.coordinate.longitude))
     }
     
+    func updateUI(data : WeatherData?){
+        DispatchQueue.main.async {
+            guard let description = data?.description else { return }
+            guard let time = data?.time else { return }
+            guard let temperature = data?.temperature else { return }
+            guard let maxTemperature = data?.maxTemperature else { return }
+            guard let minTemperature = data?.minTemperature else { return }
+            
+            self.weather.text = description
+            self.temperature.text = String(Int(temperature .celsius))
+            self.maxTemperature.text = String(Int(maxTemperature .celsius))
+            self.minTemperature.text = String(Int(minTemperature .celsius))
+            self.day.text = time .day
+            self.isToday.text = time .today
+        }
+    }
+}
+
+//MARK: - 위치정보에 대한 에러처리
+
+extension PageWeatherVC {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         let alert = UIAlertController(title: "에러", message: "사용자의 위치를 찾지못하였습니다.", preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "확인", style: UIAlertAction.Style.cancel, handler: nil))
@@ -158,5 +291,5 @@ extension PageWeatherVC : CLLocationManagerDelegate {
             
         }
     }
-    
 }
+
