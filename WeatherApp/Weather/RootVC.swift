@@ -56,6 +56,10 @@ extension RootVC {
         // 2. 앱을시작하면 appDelegate.savedPointRepo가 초기화돼있으므로 UserDefaults에 저장된 정보를 대입해준다.
         // 3. 저장된 아이템 갯수만큼 페이지수를 정해주기 위해 pageViewControllerCounter도 저장된 정보를 대입
         let savedPointArray : [SavedPoint] = plist.structArrayData(SavedPoint.self, forKey: "savedPoint")
+        let current : SavedPoint? = plist.structData(SavedPoint.self, forKey: "currentPoint")
+        guard let currentPoint = current else { return }
+        
+        appDelegate.currentPoint = currentPoint
         appDelegate.savedPointRepo = savedPointArray
         appDelegate.pageViewControllerCounter = savedPointArray.count
         
@@ -142,7 +146,7 @@ extension RootVC : UIPageViewControllerDataSource, UIPageViewControllerDelegate 
     // page indicator에 표시되는 인디케이터 갯수
     func presentationCount(for pageViewController: UIPageViewController) -> Int {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        return appDelegate.savedPointRepo.count
+        return appDelegate.savedPointRepo.count + 1
     }
     
     // page indicator의 초기값

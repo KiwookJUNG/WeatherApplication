@@ -71,7 +71,7 @@ class PageWeatherVC: UIViewController {
         // 뷰가 다시 나타날 때, 좌표 정보가 있으면 좌표정보를 이용해 빠르게 UI를 업데이트 해준다.
         // 왜냐하면, locationManager.requestLocation()에서 좌표정보를 받아오는게 느리기 때문..
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        if ( index == 0 && appDelegate.isBackedSearchCityVC == true ) {
+        if ( index == 0 ) {
             guard let currentPoint = appDelegate.currentPoint else { return }
         
             getCityName(longi: currentPoint.longitude, lati: currentPoint.latitude)
@@ -229,6 +229,9 @@ extension PageWeatherVC : CLLocationManagerDelegate {
         
         // AppDelegate의 현재 위치를 업데이트한다.
         appDelegate.currentPoint = SavedPoint(longitude: doubleLongi, latitude: doubleLati)
+        let plist = UserDefaults.standard
+        plist.setStruct(appDelegate.currentPoint, forKey: "currentPoint")
+        plist.synchronize()
         
         // 도시 이름 업데이트
         getCityName(longi: doubleLongi, lati: doubleLati)
