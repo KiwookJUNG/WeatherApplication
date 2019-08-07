@@ -23,16 +23,17 @@ class WeatherData {
     var maxTemperature : Double?// 최고기온 ( .celsius)
     var minTemperature : Double? // 최저기온 ( .celsius)
     
-    var pressure : Int? // 기압(hPa)
-    var humidity : Int? // 습도(%)
+    var pressure : Double? // 기압(hPa)
+    var humidity : Double? // 습도(%)
     
     var visibility : Double? // 가시거리 ( .km )
     
     var windSpeed : Double? // 풍속
-    var windDegree : Int?
+    var windDegree : Double?
     
     var cloud : Int?
     
+    var timezone : Int?
     var time : Int? // Unix
     var sunrise : Int? //
     var sunset : Int?
@@ -51,10 +52,11 @@ class WeatherData {
             self.longitude = coord["lon"] as? Double
             self.latitude = coord["lat"] as? Double
             self.time = todayJSON["dt"] as? Int
+            self.timezone = todayJSON["timezone"] as? Int
             
             let main = todayJSON["main"] as! NSDictionary
-            self.humidity = main["humidity"] as? Int
-            self.pressure = main["pressure"] as? Int
+            self.humidity = main["humidity"] as? Double
+            self.pressure = main["pressure"] as? Double
             self.temperature = main["temp"] as? Double
             self.maxTemperature = main["temp_max"] as? Double
             self.minTemperature = main["temp_min"] as? Double
@@ -74,7 +76,7 @@ class WeatherData {
             
             let wind = todayJSON["wind"] as! NSDictionary
             self.windSpeed = wind["speed"] as? Double
-            self.windDegree = wind["deg"] as? Int
+            self.windDegree = wind["deg"] as? Double
             
             let list = forecastJSON["list"] as! NSArray
             
