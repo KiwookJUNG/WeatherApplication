@@ -272,7 +272,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QSw-TB-Egu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-849" y="807"/>
+            <point key="canvasLocation" x="-850.39999999999998" y="806.44677661169419"/>
         </scene>
         <!--City List WeatherVC-->
         <scene sceneID="mCi-qF-nlo">
@@ -367,7 +367,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5gZ-BP-DHR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="365.60000000000002" y="1109.5952023988007"/>
+            <point key="canvasLocation" x="-62" y="1110"/>
         </scene>
         <!--Search CityVC-->
         <scene sceneID="0SF-cf-pGp">
@@ -431,7 +431,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="my1-G9-gTQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1156" y="1110.4947526236883"/>
+            <point key="canvasLocation" x="702" y="1110"/>
         </scene>
     </scenes>
 </document>
