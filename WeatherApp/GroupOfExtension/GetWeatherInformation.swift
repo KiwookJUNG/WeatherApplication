@@ -18,7 +18,7 @@ protocol GetWeatherInformation {
 }
 
 
-//MARK: - 좌표를 이용해 날씨 API를 통해 얻어온 정보로 변환하여 저장하는 프로토콜 구현
+//MARK: - PageWeatherVC 좌표를 이용해 날씨 API를 통해 얻어온 정보로 변환하여 저장하는 프로토콜 구현
 extension PageWeatherVC: GetWeatherInformation {
     func coordinateToWeather(longi: Double, lati: Double) -> WeatherData{
         // 이 좌표는 UserDefault에 저장될 필요가 없는 좌표이다.
@@ -47,7 +47,7 @@ extension PageWeatherVC: GetWeatherInformation {
 }
 
 
-//MARK: - 좌표를 이용해 날씨 API를 통해 얻어온 정보로 변환하여 저장하는 프로토콜 구현
+//MARK: - RootVC에서 좌표를 이용해 날씨 API를 통해 얻어온 정보로 변환하여 저장하는 프로토콜 구현
 extension RootVC: GetWeatherInformation {
     func coordinateToWeather(longi: Double, lati: Double) -> WeatherData{
     
@@ -69,6 +69,7 @@ extension RootVC: GetWeatherInformation {
     }
 }
 
+//MARK: - CityListWeatherVC에서 좌표를 이용해 날씨 API를 통해 얻어온 정보로 변환하여 저장하는 프로토콜 구현
 extension CityListWeatherVC: GetWeatherInformation {
     func coordinateToWeather(longi: Double, lati: Double) -> WeatherData{
         

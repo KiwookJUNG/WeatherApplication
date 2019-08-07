@@ -8,6 +8,7 @@
 
 import Foundation
 
+//MARK: - Epoc 시간을 UTC 타임존으로 설정하여 원하는 형식으로 설정해기위해 String으로 변환하는 함수를 Extension
 extension Int {
     var day : String {
         let time = Date(timeIntervalSince1970: TimeInterval(self))

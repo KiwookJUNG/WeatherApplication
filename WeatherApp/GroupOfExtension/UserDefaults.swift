@@ -8,6 +8,7 @@
 
 import Foundation
 
+//MARK: - [Struct]를 UserDefaults에 저장하기 위해 입력받은 Struct 배열을 Json으로 인코딩 후 Data 배열을 저장.
 extension UserDefaults {
     open func setStruct<T: Codable>(_ value: T?, forKey defaultName: String){
         let data = try? JSONEncoder().encode(value)
