@@ -14,10 +14,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     
-    var savedPointRepo = [SavedPoint]() // 저장된 위치
-    var weatherDataRepo = [WeatherData]() // 날씨 정보
+    var savedPointRepo : [SavedPoint] = [] // 저장된 위치 UserDefaults에 저장하는 대상
+    var weatherDataRepo : [WeatherData?] = [] // 날씨 정보 UserDefaults에 저장하는 대상이 아님
     var pageViewControllerCounter = 0
+    
+    var currentPoint : SavedPoint?
+    
     var isBackedSearchCityVC : Bool = false
+    var hasSavedData : Bool = false
+    
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
