@@ -11,6 +11,10 @@ import MapKit
 
 class RootVC : UIViewController {
     
+    
+    @IBOutlet var gotoList: UIButton!
+    
+    
     var pageViewController : UIPageViewController!
     let locationManager : CLLocationManager = CLLocationManager()
     
@@ -21,34 +25,33 @@ class RootVC : UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print("RootVC viewDidLoad 호출")
         // 스토리보드에서 추가한 Page View Controller를 읽어온다.
         self.pageViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PageVC") as? UIPageViewController
         self.pageViewController.dataSource = self
         self.pageViewController.delegate = self
-    
     }
+   
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(false)
-        
         // 저장된 데이터를 불러와 초기화
-        savedDataInitializing()
+         savedDataInitializing()
+         settingPageVC()
+    }
+}
+
+//MARK: - 입력받은 인덱스의 뷰 컨트롤러를 생성하는 메소드
+extension RootVC {
+    func viewControllerAtIndex(index : Int) -> PageWeatherVC {
+        guard let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PageWeatherVC") as? PageWeatherVC else { return PageWeatherVC() }
+        vc.index = index
         
-        settingPageVC()
+        return vc
     }
 }
 
 //MARK: - PageViewContoller 세팅 및 저장된 데이터 초기화
 extension RootVC {
-    func viewControllerAtIndex(index : Int) -> PageWeatherVC {
-        guard let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PageWeatherVC") as? PageWeatherVC else { return PageWeatherVC() }
-        
-        vc.index = index
-        
-        return vc
-    }
-    
     func savedDataInitializing() {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let plist = UserDefaults.standard
@@ -71,20 +74,22 @@ extension RootVC {
     
     func settingPageVC() {
         
-        //self.view.delete(self.pageViewController)
-        //self.view.addSubview(UIView())
-        //pageViewController.removeFromParent()
-        
-       
+        // viewWillAppear에서 호출되므로 이전에 있던 subView와 Parent - Child 관계는 끊어준다.
         pageViewController.view.removeFromSuperview()
         pageViewController.removeFromParent()
-            
+        
+        // 1. 첫 번째 뷰컨트롤러를 0 번째로하는 뷰컨트롤러 생성
+        // 2. ViewController 배열 설정
+        // 3. pgaeViewContoller가 관리해야할 ViewController 배열 등록
         let startVC = self.viewControllerAtIndex(index: choosedIndex) as PageWeatherVC
         let viewControllers = NSArray(object: startVC)
         self.pageViewController.setViewControllers(viewControllers as? [UIViewController], direction: .forward, animated: true, completion: nil)
-            
+        
+
+        // child로 등록 및 subView로 등록
         self.addChild(self.pageViewController)
         self.view.addSubview(self.pageViewController.view)
+        
        
     }
     
@@ -101,7 +106,8 @@ extension RootVC : UIPageViewControllerDataSource, UIPageViewControllerDelegate 
             }
         }
     }
-        
+    
+    // 현재 페이지의 이전 페이지의 뷰 컨트롤러를 생성해준다. (인덱스가 없으면 생성하지 않는다.)
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
             
         let vc = viewController as! PageWeatherVC
@@ -115,7 +121,8 @@ extension RootVC : UIPageViewControllerDataSource, UIPageViewControllerDelegate 
             
         return viewControllerAtIndex(index: index)
     }
-        
+    
+    // 현재 페이지의 다음 페이지의 뷰 컨트롤러를 생성해준다. (인덱스가 없으면 생성하지 않는다.)
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -135,12 +142,14 @@ extension RootVC : UIPageViewControllerDataSource, UIPageViewControllerDelegate 
         return viewControllerAtIndex(index: index)
             
     }
-        
+    
+    // page indicator에 표시되는 인디케이터 갯수
     func presentationCount(for pageViewController: UIPageViewController) -> Int {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        return appDelegate.pageViewControllerCounter
+        return appDelegate.savedPointRepo.count
     }
-        
+    
+    // page indicator의 초기값
     func presentationIndex(for pageViewController: UIPageViewController) -> Int {
         return self.choosedIndex
     }
